@@ -1,0 +1,13 @@
+clear all
+clc
+%% Get parameters
+[build_cost, maintenance_cost, fuel_cost, CO2_cost, dismantling_cost] = parameters();
+% Energy Sources are in order: Coal, Oil, Gas, Hydro, Wind, Solar, Nuclear, Biomass
+
+%% Calculations
+t_end = 600; %600 months
+dt = 1; %1 month
+plant_state = zeroes(8,600);
+plant_state(:,1) = [0.4, 0.2, 0.15,0,0.1,0.05,0,0.2]';
+energy_need = zeroes(600);
+energy_need(1) = ;
