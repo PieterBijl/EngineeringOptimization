@@ -1,4 +1,0 @@
-data = xlsread("Input Data.xlsx");
-build_cost = data(:,1);
-maintenance_cost = data(:,2);
-fuel_cost = data(:,3);
