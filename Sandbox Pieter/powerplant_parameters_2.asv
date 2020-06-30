@@ -1,9 +1,0 @@
-budget = 0.001;
-w_euro = 0.7;
-w_CO2 = 0.3;
-subsidies = [0; -0.05; 0; -0.1];
-build_subsidies = [0; -0.1; 0; -0.1];
-%maintenance_cost = [0.1; 0.05; 0.15; 0.2];
-build_cost = [0.1; 0.2; 0.1; 0.2]; % How much to build for coal and solar
-energy_cost = [0.3; 0.02; 0.15; 0.02];
-CO2_cost = [0.3; 0.0; 0.2; 0.0]; % How much CO2 do they emit?
