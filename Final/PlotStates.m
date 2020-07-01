@@ -1,5 +1,5 @@
 function PlotStates(names, states, timestep) 
-time2 = datetime('today') + caldays(1:length(states));
+time2 = datetime('today') + caldays(1:floored(length(states)*timestep/24);
 
 figure
 area(time2, states')
