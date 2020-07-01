@@ -1,16 +1,18 @@
 [powerplants, cost, carbon] = PowerPlant();
 global x0 w_dollar energy_cost capital_loan_duration dt build_cost CO2_cost P
-build_cost = [cost(1,1); cost(4,1); cost(10,1); cost(11,1)];
-energy_cost = [cost(1,2); cost(4,2); cost(10,2); cost(11,2)];
-CO2_cost = [carbon(1,1); carbon(4,1); carbon(10,1); carbon(11,1)];
+build_cost = [cost(1,1); cost(4,1); cost(10,1); cost(11,1); cost(5,1)];
+energy_cost = [cost(1,2); cost(4,2); cost(10,2); cost(11,2); cost(5,2)];
+CO2_cost = [carbon(1,1); carbon(4,1); carbon(10,1); carbon(11,1); carbon(5,1)];
 w_dollar = 0.5;
 capital_loan_duration = 20;
-build_subsidies = [0; 0; 0; 0];
-subsidies = [0; 0; 0; 0];
+build_subsidies = [0; 0; 0; 0; 0];
+subsidies = [0; 0; 0; 0; 0];
 sub = [subsidies; build_subsidies];
 dt = 1; 
 P = 30*10^6; % Power in kW
-x0 = [0.5; 0.5; 0; 0];
+x0 = [1; 0; 0; 0; 0];
+
+%% Perform some first test
 tic;
 f_normal = scenario(sub)
 toc;
@@ -29,7 +31,7 @@ toc;
     options = optimoptions(@fmincon,'Algorithm','sqp','Display','off');
     [xsol,fsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 %% GA
-options = optimoptions('ga','MaxTime',1000,'MaxGenerations',10,'Display','iter')
+options = optimoptions('ga','MaxTime',10000,'MaxGenerations',50,'Display','iter')
 A = [];
 b = [];
 Aeq = [];
@@ -37,4 +39,4 @@ beq = [];
 lb = [];
 ub = [];
 nonlcon = [];
-x_test = ga(@scenario_test,8,A,b,Aeq,beq,lb,ub,nonlcon,options)
+x_test = ga(@scenario_test,10,A,b,Aeq,beq,lb,ub,nonlcon,options)

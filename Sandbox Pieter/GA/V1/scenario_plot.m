@@ -1,4 +1,4 @@
-function f = scenario_test(sub)
+function f = scenario(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies build_subsidies
     budget = 10^9/P; % budget per year in dollars
     t_end = 30*8760; % Time after which the simulation ends in hours
@@ -6,9 +6,9 @@ function f = scenario_test(sub)
 %     build_subsidies = build_subsidies;
     subsidies = sub(1:5);
     build_subsidies = sub(6:10);
-    A = [1, 1, 1, 1, 1]; b = 1;
-    Aeq = [1, 1, 1, 1, 1]; beq = 1;
-    lb = [0 0 0 0 0]; ub = [1 1 0.3 0.2 1];
+    A = [1 1 1 1 1]; b = 1;
+    Aeq = [1 1 1 1 1]; beq = 1;
+    lb = [0 0 0 0 0]; ub = [1 1 0.3 0.3 0.1];
     nonlcon = [];
     options = optimoptions(@fmincon,'Algorithm','sqp','Display','off');
     [xsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
@@ -44,6 +44,12 @@ end
           PlotStates(n,x1,24)
 %       figure;
 %       plot(f1)
-    f = CO2_total_cost(end);
+    social_cost = 150/1000; % dollars per ton CO2
+    disp("Costs in dollars for the government")
+    gov_total_cost(end)
+    disp("Costs in dollars for CO2")
+    CO2_total_cost(end)*social_cost
+    disp("Total costs in dollars")
+    f = gov_total_cost(end) + social_cost*CO2_total_cost(end);
 %     f = gov_total_cost(end);
 end
