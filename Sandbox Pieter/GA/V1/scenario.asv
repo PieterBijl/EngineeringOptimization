@@ -1,5 +1,5 @@
 function f = scenario(sub)
-    global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies build_subsidies
+    global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies build_subsidies plot_on
     budget = 10^9/P; % budget per year in dollars
     t_end = 30*8760; % Time after which the simulation ends in hours
 %     subsidies = subsidies;
@@ -33,23 +33,19 @@ while t<t_end
     gov_build_subsidies(:,i) = P*abs(dx_step).*abs(build_subsidies');
     gov_subsidies(:,i) = P*budget*x1(:,i).*subsidies';
     gov_cost(:,i) = gov_build_subsidies(:,i)+gov_subsidies(:,i);
-    gov_total_cost(i+1) = gov_total_cost(i)+abs(sum(gov_cost(:,i)));
+    gov_total_cost(i+1) = gov_total_cost(i)+sum(gov_cost(:,i));
     added_CO2(:,i) = P*x1(:,i).*CO2_cost;
     CO2_total_cost(i+1) = CO2_total_cost(i)+sum(added_CO2(:,i));
     i = i + 1;
     t = t + time_step;
 end
-
-          n = ["Coal"; "Gas"; "Wind"; "Solar";"Nuclear"];
-          PlotStates(n,x1,24)
-%       figure;
-%       plot(f1)
-    social_cost = 150/1000; % dollars per ton CO2
-    disp("Costs in dollars for the government")
-    gov_total_cost(end)
-    disp("Costs in dollars for CO2")
-    CO2_total_cost(end)*social_cost
-    disp("Total costs in dollars")
+    if plot_on == 1
+       n = ["Coal"; "Gas"; "Wind"; "Solar";"Nuclear"];
+       PlotStates(n,x1,24)
+    end
+%        figure;
+%        plot(f1)
+    social_cost = 150/1000;
     f = gov_total_cost(end) + social_cost*CO2_total_cost(end);
 %     f = gov_total_cost(end);
 end
