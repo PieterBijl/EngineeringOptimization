@@ -57,13 +57,7 @@ test_sub = [-0.0583 -0.2357 -0.4212 -0.3057 -0.4572 0 0 -0.2393 -0.0017 -1.1513]
 global plot_on
 plot_on = 1
 scenario(test_sub)
-global plot_on
-plot_on = 0;
+
 %% Fmincon test
-x0_fmincon = zeros(1,10);
-[x_fmincon,f_fmincon] = fmincon(@scenario,x0_fmincon,A,b,Aeq,beq,lb,ub,nonlcon,options)
-global plot_on
-plot_on = 1
-scenario(x_fmincon)
-global plot_on
-plot_on = 0;
+
+x_fmincon = fmincon(@scenario,

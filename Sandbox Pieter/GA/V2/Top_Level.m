@@ -1,17 +1,18 @@
 [powerplants, cost, carbon] = PowerPlant();
-global x0 w_dollar energy_cost capital_loan_duration dt build_cost CO2_cost P plot_on
-build_cost = [cost(1,1); cost(3,1); cost(10,1); cost(11,1); cost(5,1)];
-energy_cost = [cost(1,2); cost(3,2); cost(9,2); cost(11,2); cost(5,2)];
-CO2_cost = [carbon(1,1); carbon(3,1); carbon(9,1); carbon(11,1); carbon(5,1)];
+global x0 w_dollar energy_cost capital_loan_duration dt build_cost CO2_cost P plot_on w_CO2
+build_cost = cost(:,1);
+energy_cost = cost(:,2);
+CO2_cost = carbon;
 w_dollar = 0.5;
 capital_loan_duration = 20;
+w_CO2 = 50/1000; % dollars per kg CO2
 plot_on = 0; % Do not plot in the scenario function
-build_subsidies = [0; 0; 0; 0; 0];
-subsidies = [0; 0; 0; 0; 0];
-sub = [subsidies; build_subsidies];
+build_subsidies = zeros(1,11);
+%subsidies = zeros(1,11);
+%sub = [subsidies build_subsidies];
 dt = 1; 
 P = 30*10^6; % Power in kW
-x0 = [1; 0; 0; 0; 0];
+x0 = [0.4; 0.4; 0; 0; 0.2; 0; 0; 0; 0; 0; 0];
 
 %% Perform some first test
 tic;
@@ -41,9 +42,9 @@ b = [];
 Aeq = [];
 beq = [];
 lb = [];%[-3000 -3000 -3000 -3000 -3000 max_subsidy max_subsidy max_subsidy max_subsidy max_subsidy];
-ub = [0 0 0 0 0 0.3 0.2 0 0 0];%[0 0 0 0 0 -max_subsidy -max_subsidy -max_subsidy -max_subsidy -max_subsidy];
+ub = [0 0 0 0 0 0 0 0 0 0 0 0.3 0.3 0.3 0.3 0 0 0 0 0 0 0];%[0 0 0 0 0 -max_subsidy -max_subsidy -max_subsidy -max_subsidy -max_subsidy];
 nonlcon = [];
-x_test = ga(@scenario,10,A,b,Aeq,beq,lb,ub,nonlcon,options)
+x_test = ga(@scenario,22,A,b,Aeq,beq,lb,ub,nonlcon,options)
 global plot_on
 plot_on = 1;
 scenario(x_test)
@@ -56,3 +57,13 @@ test_sub = [-0.0583 -0.2357 -0.4212 -0.3057 -0.4572 0 0 -0.2393 -0.0017 -1.1513]
 global plot_on
 plot_on = 1
 scenario(test_sub)
+global plot_on
+plot_on = 0;
+%% Fmincon test
+x0_fmincon = zeros(1,22);
+[x_fmincon,f_fmincon] = fmincon(@scenario,x0_fmincon,A,b,Aeq,beq,lb,ub,nonlcon,options)
+global plot_on
+plot_on = 1
+scenario(x_fmincon)
+global plot_on
+plot_on = 0;
