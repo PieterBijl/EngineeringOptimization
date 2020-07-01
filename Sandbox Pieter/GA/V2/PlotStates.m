@@ -1,11 +1,22 @@
 function PlotStates(names, states, timestep) 
-time2 = datetime('today') + caldays(1:length(states));
+
+startDate = datetime('today');
+endDate = datetime('today')+hours(timestep*length(states'));
+dates = linspace(startDate, endDate, length(states'));
 
 figure
-area(time2, states')
+area(dates, states')
+datetick('x','yyyy','keepticks')
 xlabel("Time")
-% ylim([0 1])
+ylim([0 1])
 ylabel("Fraction of total power supply")
 
-legend(names(:))
+% Set location and size of figure
+x0=50;
+y0=50;
+width=700;
+height=400;
+set(gcf,'position',[x0,y0,width,height])
+
+legend(names(:), 'Location', 'eastoutside')
 end
