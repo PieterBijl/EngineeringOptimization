@@ -8,7 +8,7 @@ function f = scenario(sub)
     build_subsidies = sub(5:8);
     A = [1, 1, 1, 1]; b = 1;
     Aeq = [1, 1, 1, 1]; beq = 1;
-    lb = [0 0 0 0]; ub = [1 1 1 0.5];
+    lb = [0 0 0 0]; ub = [1 1 0.3 0.2];
     nonlcon = [];
     %options = optimoptions(@fmincon,'Algorithm','sqp','Display','off');
     %[xsol,fsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);

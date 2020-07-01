@@ -16,14 +16,15 @@ f_normal = scenario(sub)
 toc;
 A = [];
 b = [];
-x = fmincon(@scenario,sub,A,b)
+%x = fmincon(@scenario,sub,A,b)
 %% Test the fmincon scenario
-
-f_fmincon = scenario_plot(x)
+tic;
+f_fmincon = scenario_test(x)
+toc;
 %% Test fmincon
     A = [1, 1, 1, 1]; b = 1;
     Aeq = [1, 1, 1, 1]; beq = 1;
-    lb = [0 0 0 0]; ub = [1 1 1 1];
+    lb = [0 0 0 0]; ub = [1 1 0.3 0.2];
     nonlcon = [];
     options = optimoptions(@fmincon,'Algorithm','sqp','Display','off');
     [xsol,fsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
@@ -36,4 +37,4 @@ beq = [];
 lb = [];
 ub = [];
 nonlcon = [];
-x = ga(@scenario,8,A,b,Aeq,beq,lb,ub,nonlcon,options)
+x_test = ga(@scenario_test,8,A,b,Aeq,beq,lb,ub,nonlcon,options)
