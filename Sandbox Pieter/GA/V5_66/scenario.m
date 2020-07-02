@@ -1,11 +1,11 @@
 function f = scenario(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies build_subsidies plot_on w_CO2
-    budget_year = 10*10^9/P; % budget per year in dollars
-    t_end = 30*8760; % Time after which the simulation ends in hours
+    budget_year = 6*10^9/P; % budget per year in dollars
 %     subsidies = subsidies;
 %     build_subsidies = build_subsidies;
     subsidies = sub(1:11);
     build_subsidies = sub(12:22);
+    sub_count = 0; % Check to choose from the right subsidies
     A = ones(1,11); b = 1;
     Aeq = ones(1,11); beq = 1;
     lb = zeros(1,11); ub = [1 1 1 1 0.3 0.3 0.3 0.3 0.3 0.3 0.3];
@@ -22,13 +22,24 @@ function f = scenario(sub)
     CO2_total_cost(1) = 0;
     tax_factor = 0;
     t = 0;
-    time_step = 500; % Timestep in hours
+    time_step = 600; % Timestep in hours
+    t_end = 30*8760; % Time after which the simulation ends in hours
+
     budget = budget_year/8760*time_step;
-    options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1,'Display','off');
-    [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
+%     options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1,'Display','off');
+    xsol = xsol_abs;
+    fsol = f_abs;
+%     [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
 while t<t_end
-    if rem(i,50) == 0
-        [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
+%     if rem(i,5000) == 0
+%         [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
+%     end
+    if rem(t,87600) == 0  && t~=0
+       sub_count = sub_count+1;
+       global subsidies build_subsidies
+       subsidies = sub(1+22*sub_count:11+22*sub_count);
+       build_subsidies = sub(12+22*sub_count:22+22*sub_count);
+       [xsol,fsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);      
     end
     R = 0*randn(11,1)/5000;
     dx = xsol-x1(:,i)+R;
@@ -67,8 +78,8 @@ end
     f = gov_total_cost(end) + w_CO2_used*CO2_total_cost(end);
     if plot_on == 1
        n = ["Coal"; "Coal with CC"; "Gas"; "Gas with CC"; "Nuclear"; "Biomass"; "Geothermal"; "Hydro"; "Onshore Wind"; "Offshore Wind"; "Solar"];
-       colors = [[0 0 0]; [0.494 0.184 0.556]; [0.466 0.674 0.188]; [0 1 0]; [1 1 0]; [0.929 0.694 0.125]; "red"; "blue"; "cyan"; [0 0.4470 0.7410]; [0.85 0.325 0.098]];
-       n(:,2) = colors;
+%        colors = [[0 0 0]; [0.494 0.184 0.556]; [0.466 0.674 0.188]; [0 1 0]; [1 1 0]; [0.929 0.694 0.125]; [1 0 0]; [0 0 1]; [1 0 1]; [0 0.4470 0.7410]; [0.85 0.325 0.098]];
+%        n(:,2:4) = colors;
        PlotStates(n,x1,time_step)
         figure;
         plot(f_check)

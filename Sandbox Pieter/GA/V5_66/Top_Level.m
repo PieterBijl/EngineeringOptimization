@@ -12,7 +12,7 @@ build_subsidies = zeros(1,11);
 %sub = [subsidies build_subsidies];
 dt = 1; 
 P = 30*10^6; % Power in kW
-x0 = [0.4; 0.4; 0; 0; 0.2; 0; 0; 0; 0; 0; 0];
+x0 = [0.4; 0; 0.4; 0; 0.2; 0; 0; 0; 0; 0; 0];
 %% Perform some first test
 tic;
 f_normal = scenario(sub)
@@ -35,15 +35,14 @@ toc;
 global plot_on
 plot_on = 0; % Set to 0 or you're gonna have a bad time
 options = optimoptions('ga','Display','iter','MaxGenerations',100)
-max_subsidy = 10*-0.5*max(energy_cost);
 A = [];
 b = [];
 Aeq = [];
 beq = [];
 lb = [];%[-3000 -3000 -3000 -3000 -3000 max_subsidy max_subsidy max_subsidy max_subsidy max_subsidy];
-ub = [0 0 0 0 0 0 0 0 0 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0 0 0];%[0 0 0 0 0 -max_subsidy -max_subsidy -max_subsidy -max_subsidy -max_subsidy];
+ub = [0 0 0 0 0 0 0 0 0 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0 0 0, 0 0 0 0 0 0 0 0 0 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0 0 0, 0 0 0 0 0 0 0 0 0 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0 0 0];%[0 0 0 0 0 -max_subsidy -max_subsidy -max_subsidy -max_subsidy -max_subsidy];
 nonlcon = [];
-x_test = ga(@scenario,22,A,b,Aeq,beq,lb,ub,nonlcon,options)
+x_test = ga(@scenario,66,A,b,Aeq,beq,lb,ub,nonlcon,options)
 global plot_on
 plot_on = 1;
 scenario(x_test)
@@ -59,7 +58,7 @@ scenario(test_sub)
 global plot_on
 plot_on = 0;
 %% Fmincon test
-x0_fmincon = zeros(1,22);
+x0_fmincon = zeros(1,66);
 global plot_on
 plot_on = 0;
 [x_fmincon,f_fmincon] = fmincon(@scenario,x0_fmincon,A,b,Aeq,beq,lb,ub,nonlcon,options)
