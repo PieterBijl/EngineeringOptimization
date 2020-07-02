@@ -1,8 +1,6 @@
 function f = scenario(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies plot_on w_CO2
     budget_year = 8*10^9/P; % budget per year in dollars
-%     subsidies = subsidies;
-%     build_subsidies = build_subsidies;
     subsidies = sub(1:11);
     sub_count = 0; % Check to choose from the right subsidies
     A = ones(1,11); b = 1;
@@ -13,6 +11,12 @@ function f = scenario(sub)
     [xsol_abs,f_abs] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 
     %% Market Function
+    x1 = zeros(11,438);
+    f_check = zeros(438);
+    market_cost = zeros(11,438);
+    total_market_cost = zeros(438);
+    gov_subsidies = zeros(11,438);
+    gov_cost = zeros(11,438);
     x1(:,1) = x0;
     i = 1;
     j = 1;
@@ -21,8 +25,6 @@ function f = scenario(sub)
     CO2_total_cost(1) = 0;
     tax_factor = 0;
     t = 0;
-    time_step = 600; % Timestep in hours
-    t_end = 30*8760; % Time after which the simulation ends in hours
 
     budget = budget_year/8760*time_step;
 %     options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1,'Display','off');
