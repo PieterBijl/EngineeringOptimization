@@ -1,6 +1,6 @@
 function f = scenario(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies build_subsidies plot_on w_CO2
-    budget = 10^9/P; % budget per year in dollars
+    budget_year = 10*10^9/P; % budget per year in dollars
     t_end = 30*8760; % Time after which the simulation ends in hours
 %     subsidies = subsidies;
 %     build_subsidies = build_subsidies;
@@ -22,22 +22,31 @@ function f = scenario(sub)
     CO2_total_cost(1) = 0;
     tax_factor = 0;
     t = 0;
-    time_step = 1000; % Timestep in hours
+    time_step = 500; % Timestep in hours
+    budget = budget_year/8760*time_step;
     options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1,'Display','off');
-    [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
+    xsol = xsol_abs;
+    fsol = f_abs;
+%     [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
 while t<t_end
-    if rem(i,20) == 0
+    if rem(i,5000) == 0
         [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
     end
-    dx = xsol-x1(:,i);
+    R = 0*randn(11,1)/5000;
+    dx = xsol-x1(:,i)+R;
     norm_dx = dx/norm(dx);
     f_check(i) = fsol;
-    unit_cost = sum(abs(norm_dx).*build_cost);
+    unit_cost = sum(abs(norm_dx).*(build_cost+build_subsidies'));
     dx_step = budget/unit_cost*norm_dx;
     x1(:,i+1) = x1(:,i)+dx_step;
     M_f = ones(11,1);
-    M_f(2) = 2;
-    M_f(4) = 2;
+    M_f(2) = x1(2,i)+1;
+    M_f(4) = x1(4,i)+1;
+    M_f(7) = 4*x1(7,i)^2-4*x1(7,i)+2;
+    M_f(8) = 2-x1(8,i);
+    M_f(9) = 4*x1(9,i)^2-4*x1(9,i)+2;
+    M_f(10) = 4*x1(10,i)^2-4*x1(10,i)+2;
+    M_f(11) = 4*x1(11,i)^2-4*x1(11,i)+2;
 %     M_f = [1; 1; 1; 4*x1(4,i)^2-4*x1(4,i)+2; 1];
     market_cost(:,i) = time_step*x1(:,i).*(M_f.*((build_cost+build_subsidies')/(capital_loan_duration*8760)+energy_cost)+subsidies');
     total_market_cost(i+1) = total_market_cost(i)+P*sum(market_cost(:,i));
@@ -50,19 +59,31 @@ while t<t_end
     i = i + 1;
     t = t + time_step;
 end
-    f = gov_total_cost(end) + w_CO2*CO2_total_cost(end);
+    w_CO2_used = (3*10^-12*CO2_total_cost(end)+1)*w_CO2;
+%     if CO2_total_cost(end)>500*10^9
+%        w_CO2_used = 2*w_CO2; 
+%     end
+%     if CO2_total_cost(end)>10^12
+%        w_CO2_used = 4*w_CO2; 
+%     end
+    f = gov_total_cost(end) + w_CO2_used*CO2_total_cost(end);
     if plot_on == 1
        n = ["Coal"; "Coal with CC"; "Gas"; "Gas with CC"; "Nuclear"; "Biomass"; "Geothermal"; "Hydro"; "Onshore Wind"; "Offshore Wind"; "Solar"];
-       PlotStates(n,x1,24)
+%        colors = [[0 0 0]; [0.494 0.184 0.556]; [0.466 0.674 0.188]; [0 1 0]; [1 1 0]; [0.929 0.694 0.125]; [1 0 0]; [0 0 1]; [1 0 1]; [0 0.4470 0.7410]; [0.85 0.325 0.098]];
+%        n(:,2:4) = colors;
+       PlotStates(n,x1,time_step)
         figure;
         plot(f_check)
        disp("Costs in dollars for the government")
        gov_total_cost(end)
        disp("CO2 in dollars")
        w_CO2*CO2_total_cost(end)
+       disp("Total CO2 emissions in Megatonnes")
+       CO2_total_cost(end)/(10^9)
        disp("fsol absolute")
        f_abs
        disp("fsol relative at end")
        f_check(end)
+       w_CO2_used
     end
 end
