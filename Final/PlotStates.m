@@ -7,7 +7,7 @@ dates = linspace(startDate, endDate, length(states'));
 figure
 h = area(dates, states');
 for i = 1:length(names(:,2))
-    h(i).FaceColor = names(i,2);
+    h(i).FaceColor = cell2mat(names(i,2));
 end
 datetick('x','yyyy','keepticks')
 xlabel("Time")
