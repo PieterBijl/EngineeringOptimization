@@ -1,28 +1,30 @@
-function f = scenario(sub)
+function f = scenario2D(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies plot_on w_CO2
     budget_year = 8*10^9/P; % budget per year in dollars
-    subsidies = sub(1:11);
+    subsidies = sub(1:2);
     sub_count = 0; % Check to choose from the right subsidies
-    A = ones(1,11); b = 1;
-    Aeq = ones(1,11); beq = 1;
-    lb = zeros(1,11); ub = [1 1 1 1 0.3 0.3 0.3 0.3 0.3 0.3 0.3];
+    A = ones(1,2); b = 1;
+    Aeq = ones(1,2); beq = 1;
+    lb = zeros(1,2); ub = [1 1];
     nonlcon = [];
     options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1000,'Display','off');
     [xsol_abs,f_abs] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 
     %% Market Function
-    x1 = zeros(11,438);
-    f_check = zeros(438);
-    market_cost = zeros(11,438);
-    total_market_cost = zeros(438);
-    gov_subsidies = zeros(11,438);
-    gov_cost = zeros(11,438);
+    time_step = 600; % Timestep in hours
+    t_end = 30*8760; % Time after which the simulation ends in hours
+    x1 = zeros(2,t_end/time_step);
+    f_check = zeros(1,t_end/time_step);
+    market_cost = zeros(2,t_end/time_step);
+    total_market_cost = zeros(1,t_end/time_step);
+    gov_subsidies = zeros(2,t_end/time_step);
+    gov_cost = zeros(2,t_end/time_step);
+    gov_total_cost = zeros(1,t_end/time_step);
+    added_CO2 = zeros(2,t_end/time_step);
+    CO2_total_cost = zeros(1,t_end/time_step);
     x1(:,1) = x0;
     i = 1;
     j = 1;
-    gov_total_cost(1) = 0;
-    total_market_cost(1) = 0;
-    CO2_total_cost(1) = 0;
     tax_factor = 0;
     t = 0;
 
@@ -36,27 +38,20 @@ while t<t_end
 %         [xsol,fsol] = fmincon(@objfun,x1(:,i),A,b,Aeq,beq,lb,ub,nonlcon,options);
 %     end
     if rem(t,43800) == 0  && t~=0
-       sub_count = sub_count+1;
-       global subsidies
-       subsidies = sub(1+11*sub_count:11+11*sub_count);
+%        sub_count = sub_count+1;
+%        global subsidies
+%        subsidies = sub(1+2*sub_count:11+11*sub_count);
        [xsol,fsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);      
     end
-    R = 0*randn(11,1)/5000;
+    R = 0*randn(2,1)/5000;
     dx = xsol-x1(:,i)+R;
     norm_dx = dx/norm(dx);
     f_check(i) = fsol;
     unit_cost = sum(abs(norm_dx).*build_cost);
     dx_step = budget/unit_cost*norm_dx;
     x1(:,i+1) = x1(:,i)+dx_step;
-    M_f = ones(11,1);
-    M_f(2) = x1(2,i)+1;
-    M_f(4) = x1(4,i)+1;
-    M_f(7) = 4*x1(7,i)^2-4*x1(7,i)+2;
-    M_f(8) = 2-x1(8,i);
-    M_f(9) = 4*x1(9,i)^2-4*x1(9,i)+2;
-    M_f(10) = 4*x1(10,i)^2-4*x1(10,i)+2;
-    M_f(11) = 4*x1(11,i)^2-4*x1(11,i)+2;
-%     M_f = [1; 1; 1; 4*x1(4,i)^2-4*x1(4,i)+2; 1];
+    M_f = ones(2,1);
+    M_f(2) = 4*x1(2,i)^2-4*x1(2,i)+2;
     market_cost(:,i) = time_step*x1(:,i).*(M_f.*(build_cost/(capital_loan_duration*8760)+energy_cost)+subsidies');
     total_market_cost(i+1) = total_market_cost(i)+P*sum(market_cost(:,i));
     gov_subsidies(:,i) = -P*time_step*x1(:,i).*subsidies';
@@ -67,7 +62,7 @@ while t<t_end
     i = i + 1;
     t = t + time_step;
 end
-    w_CO2_used = (3*10^-12*CO2_total_cost(end)+1)*w_CO2;
+    w_CO2_used = exp(log(8)*CO2_total_cost(end)/10^12)*w_CO2;
 %     if CO2_total_cost(end)>500*10^9
 %        w_CO2_used = 2*w_CO2; 
 %     end
@@ -88,7 +83,7 @@ end
        w_CO2_used*CO2_total_cost(end)
        disp("Total CO2 emissions in Megatonnes")
        CO2_total_cost(end)/(10^9)
-       disp("fsol absolute")
+       disp("fsol ab7solute")
        f_abs
        disp("fsol relative at end")
        f_check(end)
