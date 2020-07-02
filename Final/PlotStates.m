@@ -5,7 +5,10 @@ endDate = datetime('today')+hours(timestep*length(states'));
 dates = linspace(startDate, endDate, length(states'));
 
 figure
-area(dates, states')
+h = area(dates, states');
+for i = 1:length(names(:,2))
+    h(i).FaceColor = names(i,2);
+end
 datetick('x','yyyy','keepticks')
 xlabel("Time")
 ylim([0 1])
@@ -18,5 +21,5 @@ width=700;
 height=400;
 set(gcf,'position',[x0,y0,width,height])
 
-legend(names(:), 'Location', 'eastoutside')
+legend(names(:,1), 'Location', 'eastoutside')
 end
