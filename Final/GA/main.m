@@ -14,7 +14,7 @@ x0 = [0.4; 0; 0.4; 0; 0.2; 0; 0; 0; 0; 0; 0];
 %% GA
 global plot_on
 plot_on = 0; % Set to 0 or you're gonna have a bad time
-options = optimoptions('ga','Display','iter','MaxGenerations',1000,'PlotFcn', @gaplotbestf,'CrossoverFraction', 0.8)
+options = optimoptions('ga','Display','iter','MaxGenerations',10,'PlotFcn', @gaplotgenealogy,'CrossoverFraction', 0.8)
 A = [];
 b = [];
 Aeq = [];
