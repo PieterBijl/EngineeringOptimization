@@ -1,3 +1,7 @@
-"""
+'''
+Made by Toon Stolk and Pieter Bijl as part of the course Engineering Optimization
+at Delft University of Technology
 
-"""
+matlabcode.m
+explanation about the function inputs outputs etc
+'''
