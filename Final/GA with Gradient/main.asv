@@ -49,21 +49,22 @@ global plot_on
 plot_on = 0;
 
 %% Robustness
-mean_x = abs(mean(abs(x_test)));
-std_noise = 2*mean_x;
+mean_x = abs(mean(x_test));
+std_noise = 0.5*mean_x;
 plot_on = 0;
-f_robust = zeros(1,1000);
-noise_mean = zeros(1,1000);
+f_robust = zeros(1,100);
+noise_mean = zeros(1,100);
 for i =1:1000
     noise = randn(1,66)*(std_noise);
     new_x = x_test+noise;
     f_robust(i) = scenario(new_x);
     noise_std(i) = std(noise);
 end
-f_robust_mean = mean(f_robust)
+
 %% Plot Histogram of the Robustness Check
 figure;
 histogram(f_robust)
-title(['Histogram of input with Gaussian noise sigma = ',num2str(std_noise),' $/kWh, n = 1000'])
+title(['Histogram of Input with Gaussian noise sigma = ',num2str(),' C'])
+title("Histogram of Input with Noise")
 xlabel("Total Cost in USD")
 ylabel("frequency")

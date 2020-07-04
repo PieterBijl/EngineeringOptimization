@@ -5,7 +5,7 @@ function f = scenario(sub)
     sub_count = 0; % Check to choose from the right subsidies
     A = ones(1,11); b = 1;
     Aeq = ones(1,11); beq = 1;
-    lb = zeros(1,11); ub = [1 1 1 1 1 1 1 0.1 0.1 0.3 0.3];
+    lb = zeros(1,11); ub = [1 1 1 1 1 1 0.1 1 0.1 1 0.3];
     nonlcon = [];
     options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1000,'Display','off','SpecifyObjectiveGradient',true);
     [xsol_abs,f_abs] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
