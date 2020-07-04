@@ -48,7 +48,44 @@ xlabel("Subsidy/Excise Coal $/kWh")
 ylabel("Subsidy/Excise Offshore Wind $/kWh")
 zlabel("Total Cost")
 
-%% Perfrom Fmincon
+%% Perform self made top level optimization
+
+c1 = build_cost/(capital_loan_duration*8760)+energy_cost;
+x0_sub = [0, 0]; % 0 subsidies for both coal and wind energy
+
+lb = [];
+ub = [energy_cost(1) energy_cost(2)];
+
+% Optimization initialisation
+cycle = 0;
+max_iter = 3;       % Maximum number of iterations
+dx = 1e-5;         % Finite-difference step
+plot_on = 0;
+
+while cycle < max_iter
+    cycle = cycle + 1;
+    
+    % finite difference approximation
+    fx1 = scenario2D(x0_sub);
+    fxplush1 = scenario2D([x0_sub(1)+dx, x0_sub(2)]);
+    h1 = (fxplush1-fx1)./dx;
+    fx2 = scenario2D(x0_sub);
+    fxplush2 = scenario2D([x0_sub(1), x0_sub(2)+dx]);
+    h2 = (fxplush2-fx2)./dx
+    % Gradient vector
+    grad = [h1, h2];
+    
+    x_sub_new = linprog(grad, [], [], [], [], lb, ub)
+    
+    x0_sub = x_sub_new';
+end
+
+
+plot_on = 1;
+scenario2D(x0_sub)
+plot_on = 0;
+
+%% Perform Fmincon
 plot_on = 0; 
 x0_fmincon = [0 0];
 A = [];
@@ -66,7 +103,7 @@ plot_on = 0;
 
 %% Perform GA
 plot_on = 0;
-options = optimoptions('ga','Display','iter','MaxGenerations',1000,'PlotFcn', @gaplotbestf,'CrossoverFraction', 0.8)
+options = optimoptions('ga','Display','iter','MaxGenerations',100,'PlotFcn', @gaplotbestf,'CrossoverFraction', 0.8)
 tic;
 x_test = ga(@scenario2D,2,A,b,Aeq,beq,lb,ub,nonlcon,options)
 toc;

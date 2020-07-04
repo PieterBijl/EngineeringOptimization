@@ -1,4 +1,4 @@
-function f = scenario2D(sub)
+function f = scenario2Dcaveman(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies plot_on w_CO2
     budget_year = 8*10^9/P; % budget per year in dollars
     subsidies = sub(1:2);
@@ -83,7 +83,7 @@ end
        w_CO2_used*CO2_total_cost(end)
        disp("Total CO2 emissions in Megatonnes")
        CO2_total_cost(end)/(10^9)
-       disp("fsol absolute")
+       disp("fsol ab7solute")
        f_abs
        disp("fsol relative at end")
        f_check(end)
