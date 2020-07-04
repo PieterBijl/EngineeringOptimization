@@ -11,6 +11,7 @@
 % The output gives the total cost in USD and if the global variable plot_on
 % = 1 it will also plot the energy transition as well as the change of the
 % market function over time.
+
 function f = scenario(sub)
     global x0 energy_cost capital_loan_duration build_cost CO2_cost P subsidies plot_on w_CO2
     budget_year = 8*10^9/P; % budget per year in dollars for the market it is divided by P since the state of the powerplants is between 0 and 1
@@ -25,7 +26,7 @@ function f = scenario(sub)
     options = optimoptions(@fmincon,'Algorithm','sqp','MaxIterations',1000,'Display','off','SpecifyObjectiveGradient',true);
     [xsol_abs,f_abs] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options); % Value that the market sees as 'ideal'
 
-    %% Market Function
+    %% Run Trough A Scenario
     time_step = 600; % Timestep in hours
     t_end = 30*8760; % Time after which the simulation ends in hours
     x1 = zeros(11,t_end/time_step); % state vector for every timestep
@@ -37,7 +38,7 @@ function f = scenario(sub)
     gov_total_cost = zeros(1,t_end/time_step); % Matrix for cumulative costs for the government
     added_CO2 = zeros(11,t_end/time_step); % Matrix for CO2 emissions at ever timestep for every powerplant
     CO2_total_cost = zeros(1,t_end/time_step); % Matrix for cumulative CO2 emissions
-    x1(:,1) = x0;
+    x1(:,1) = x0; % Initialize the state vector
     i = 1;
     t = 0;
 
@@ -55,7 +56,7 @@ function f = scenario(sub)
            [xsol,fsol] = fmincon(@objfun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);      
         end
         dx = xsol-x1(:,i); % Calculate difference between current and ideal state
-        norm_dx = dx/norm(dx); % Make a unit vecotr
+        norm_dx = dx/norm(dx); % Make a unit vector
         f_check(i) = fsol; % For verification purposes
         unit_cost = sum(abs(norm_dx).*build_cost); % Calculate the unit cost in the direction the market wants to go
         dx_step = budget/unit_cost*norm_dx; % Calculate the size of the step the market is able to make

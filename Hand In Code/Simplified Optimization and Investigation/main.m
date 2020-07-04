@@ -1,3 +1,17 @@
+% Made by Toon Stolk and Pieter Bijl as part of the course Engineering Optimization
+% at Delft University of Technology
+% 
+% main.m
+% This is the main file for the 2D optimalization. In this file the market
+% function and the scenario function are plotted for 2 dimensions. Also the
+% various optimization functions are exectued here.
+% 
+% Dependencies:
+% PowerPlant.m
+% Power Plant Data.xlsx
+
+clc; clear all;
+
 [powerplants, cost, carbon] = PowerPlant();
 global x0 w_dollar energy_cost capital_loan_duration dt build_cost CO2_cost P plot_on w_CO2
 build_cost = [cost(1,1); cost(10,1)];
@@ -10,12 +24,14 @@ plot_on = 0; % Do not plot in the scenario function
 dt = 1; 
 P = 30*10^6; % Power in kW
 x0 = [0.5; 0.5];
+
 %% Create Market Function Plot
+% This part creates a 3D plot of the market function
 x = linspace(0,1,100); % Coal
 y = linspace(0,1,100); % Wind
 z = zeros(100,100);
 global subsidies
-subsidies = [0 0]
+subsidies = [0 0];
 for i = 1:length(x)
     for j = 1:length(y)
         [z(i,j),g] = objfun([x(i); y(j)]);
@@ -29,8 +45,9 @@ xlabel("Coal % of power supply")
 ylabel("Wind % of power supply")
 zlabel("Market cost")
 
-%% Create Scenario Space with no subsidies
-sub = [0 0];
+%% Create Scenario Space
+% This section creates a 3D plot of how the total cost of a scenario
+% changes based on the subsidies/excises of the goverment as input.
 x = linspace(-energy_cost(1),energy_cost(1),100);
 y = linspace(-energy_cost(2),energy_cost(2),100);
 z = zeros(100,100);
@@ -92,7 +109,7 @@ A = [];
 b = [];
 Aeq = [];
 beq = [];
-lb = [];%[-3000 -3000 -3000 -3000 -3000 max_subsidy max_subsidy max_subsidy max_subsidy max_subsidy];
+lb = [];
 ub = [energy_cost(1) energy_cost(2)];
 nonlcon = []
 options = optimoptions(@fmincon,'Algorithm','sqp','Display','iter');
@@ -102,6 +119,8 @@ scenario2D(x_fmincon)
 plot_on = 0;
 
 %% Perform GA
+% This section performs a genetic algorithm optimization on the 2D problem
+% and plots the result. It uses the same settings as fmincon()
 plot_on = 0;
 options = optimoptions('ga','Display','iter','MaxGenerations',100,'PlotFcn', @gaplotbestf,'CrossoverFraction', 0.8)
 tic;

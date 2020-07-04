@@ -6,6 +6,12 @@
 % plotting is called from. The global variables and inputs are defined
 % here. In the first section the genetic algorithm is called and its output plotted
 % The second section deals with the robustness checks.
+%
+% Dependencies:
+% PowerPlant.m
+% Power Plant Data.xlsx
+
+clc; clear all;
 
 [powerplants, cost, carbon] = PowerPlant(); % Get the data about the powerplants from the excel sheet
 % Set global variables to be used in functions
