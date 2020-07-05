@@ -1,4 +1,16 @@
 function [powerplants, cost, carbon] = PowerPlant()
+% Made by Toon Stolk and Pieter Bijl as part of the course Engineering Optimization
+% at Delft University of Technology
+% 
+% PowerPlant.m
+% PowerPlant.m is a function that reads a table of data specified in an
+% excel sheet. The data contains different energy sources and its
+% associated capital costs, maintenance costs and fuel costs.
+% Dependencies:
+% Power Plant Data.xlsx
+
+    % Specify filename, change when necessary (do note the format to run
+    % the program smoothly)
     filename = 'Power Plant Data.xlsx';
     dataTable = readtable(filename);
 

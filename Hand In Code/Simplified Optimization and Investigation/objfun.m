@@ -7,6 +7,8 @@
 % variables energy_cost, capital_loan_duration build_cost and subsidies to
 % calculate what according to those variables cost would be.
 % It returns that state along with the gradient to be used in fmincon().
+% Dependencies:
+% jacobjfun.m
 
 function [f, g] = objfun(x)
     global energy_cost capital_loan_duration build_cost subsidies

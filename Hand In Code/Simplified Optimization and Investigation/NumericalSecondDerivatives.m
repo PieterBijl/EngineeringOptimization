@@ -1,7 +1,7 @@
 % Made by Toon Stolk and Pieter Bijl as part of the course Engineering Optimization
 % at Delft University of Technology
 % 
-% NumericalDerivatives.m
+% NumericalSecondDerivatives.m
 % The Numerical Derivatives file is a standalone file that computes the
 % second order derivatives of the cost function of the market model. The 
 % derivatives are computed using a forward finite-difference approximation. 
