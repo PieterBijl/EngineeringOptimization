@@ -30,7 +30,7 @@ x0 = [0.5; 0; 0.27; 0; 0.03; 0.04; 0.02; 0.01; 0.05; 0.05; 0.03];
 
 %% GA
 global plot_on
-plot_on = 0; % Set to 0 or your computer will crahs because of all the plots
+plot_on = 0; % Set to 0 or your computer will crash because of all the plots
 options = optimoptions('ga','Display','iter','MaxGenerations',1000,'PlotFcn', @gaplotbestf,'CrossoverFraction', 0.8)
 A = [];
 b = [];
